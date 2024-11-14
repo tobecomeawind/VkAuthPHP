@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\LoginPageController;
+
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('login', function () {
-	return view('log');
-})->name('LoginPage');
+Route::get('/', [LoginPageController::class, 'showLoginPage'])
+	->name('LoginPage');
 
 /*
 Route::get('vkAuth', function () {
@@ -14,8 +15,9 @@ Route::get('vkAuth', function () {
 })->name('VkAuth');
 */
 
+/*
 Route::get('/', function () {
     return redirect()->route('LoginPage');
 });
-
+ */
 

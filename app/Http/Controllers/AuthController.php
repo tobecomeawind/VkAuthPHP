@@ -8,60 +8,38 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-	//
-	
-	public function sendAuthorizeRequest()
+
+	public function createUrlAuthorizeRequest()
 	{
 		$client_id = ServiceApp::ID;
 		$codes     = $this->generateCodes();			
 
-		$response_type = 'code';	
-		$method        = 's256'; //	code_challenge_method	
-		$redirect_uri  = 'http://localhost:8000';
-		$state         = $this->getRandomWord(31);
-		$scope         = 'email phone';	
-		
-		//$query = "client_id=$client_id&response_type=$response_type";	
+		$response_type  = 'code'                  ;	
+		$method         = 's256'                  ;  //code_challenge_method	
+		$redirect_uri   = 'http://localhost'      ;
+		$state          = $this->getRandomWord(31);
+		$scope          = 'email phone'           ;	
+		$code_verifier  = $codes['code_verifier' ];
+		$code_challenge = $codes['code_challenge'];
 
-		
-		//return redirect()->away("https://id.vk.com/authorize?".$query);
-		/*	
-		$response = Http::get('https://id.vk.com/authorize', [
+		$url = url()->query('https://id.vk.com/authorize', [
 			'client_id'             => $client_id,
 			'response_type'         => $response_type,
 			'scope'	                => $scope,
 			'redirect_uri'          => $redirect_uri,
 			'state'                 => $state,
-			'code_challenge'        => $codes['code_challenge'],
+			'code_challenge'        => $code_challenge,
 			'code_challenge_method' => $method,
 		]);	
-		*/	
 		
-		//return redirect("https://id.vk.com/authorize?client_id=$client_id&response_type=$response_type&scope=$scope&redirect_uri=$redirect_uri&state=$state&code_challenge=$codes['code_challenge']&code_challenge_method=$method");
-	
-	    //return redirect()->route('VkAuth');
-		//return view('test', compact($response));
-		//echo view($response);
-		
+		session([
+			'code_verifier' => $code_verifier,
+		]);
 
-		//echo $response->json();
 
-		//return $response;
-		//
-		//
 
-		return url()->query('https://id.vk.com/authorize', [
-			'client_id'             => $client_id,
-			'response_type'         => $response_type,
-			'scope'	                => $scope,
-			'redirect_uri'          => $redirect_uri,
-			'state'                 => $state,
-			'code_challenge'        => $codes['code_challenge'],
-			'code_challenge_method' => $method,
-		]);	
-
+		return $url;
 	}
-
 
 
 	public function generateCodes()
